@@ -1,22 +1,3 @@
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <title>ec2metadata</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="ec2metadata.css">
-</head>
-<body>
-<div class="container">
-  <nav class="navbar navbar-fixed-top navbar-inverse">
-    <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/">ec2metadata</a>
-      </div>
-    </div>
-  </nav>
   <p>Current profile: <code><%= current_profile %></code></p>
 
   <form method='POST' action='/profile'>
@@ -41,22 +22,10 @@
       <td><input name='role' list='roles' style="width: 500px;" autocomplete="off">
       <datalist id='roles'>
       <% roles.each do |role|
-        %><option value='<%= role %>'><%= role.gsub(/.*:role\//, '' ) %></option>
+        %><option value='<%= role %>'><%= role %></option>
       <% end %>
       </datalist></td>
     </tr>
-      <% if profile_auth[current_profile] and not profile_auth[current_profile].empty? %>
-      <tr><td colspan=2 style='padding: 1em'>
-      <p><em>
-        Since an MFA token was entered at profile selection time, it needn't be
-        entered here.  However, you're still free to do so if you like.
-      </em>
-      </p>
-      <p>Your Muti-Factor Profile Authentication expries at <%= profile_auth[current_profile]['Expiration'] =%>
-      </p>
-      </td></tr>
-      <% end %>
-    <tr>
       <td>MFA Device
       </td>
       <td>
@@ -68,12 +37,33 @@
         <option>
       </td>
     </tr>
-    <tr><td>Duration</td>
-      <td><input name='duration' value='1800' style="width:150px;"></input></td>
+    <tr><td>Duration (max 3600)</td>
+      <td><input name='duration' value='3600' style="width:150px;"></input></td>
     </tr>
     <tr>
       <td>MFA Token</td>
-      <td><input type='number' name='mfa' style="width:150px;" ></input></td>
+      <td><input type='number' name='mfa' style="width:150px;" ></input>
+      <% if profile_auth[current_profile] and not profile_auth[current_profile].empty? %>
+      <p><em>
+        Since an MFA token was entered at profile selection time, it needn't be
+        entered here.  However, you're still free to do so if you like.
+      </em>
+      </p>
+      <p>Your Muti-Factor Profile Authentication expries at <%= profile_auth[current_profile]['Expiration'] =%>
+      </p>
+    <% end %>
+    </td>
+    <tr>
+    </tr>
+    <tr>
+      <td>Auto-Refresh Credentials</td>
+      <td>
+        <% if profile_auth[current_profile] and not profile_auth[current_profile].empty? %>
+        <input type='checkbox' name='autorefresh' title="check to enable auto-refreshing of the role when it exipres" /> 
+        <% else %>
+          <em>Proved an MFA token at profile selection time to allow auto-refreshing credentials</em>
+        <% end %>
+      </td>
     </tr>
     <tr><td rowspan='2'><input style="background-color: #ffafaf" type='submit' value='Assume Role'></input></td></tr>
   </table>
@@ -97,8 +87,3 @@
       <iframe width='95%' src='/identity'>
       </iframe>
     <% end %>
-  </div>
-  <!-- Latest compiled and minified JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-</body>
-</html>

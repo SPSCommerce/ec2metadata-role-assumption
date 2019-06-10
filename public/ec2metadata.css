@@ -3,3 +3,12 @@ body {
   padding-top: 50px;
   padding-bottom: 20px;
 }
+table tr td {
+  vertical-align: top;
+}
+.checkfail {
+  background-color: #fcc;
+  border: red;
+  margin: 0.7em;
+  padding: 0.3em;
+}
